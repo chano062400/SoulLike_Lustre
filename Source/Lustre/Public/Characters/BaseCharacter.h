@@ -41,8 +41,6 @@ protected:
 	
 	virtual void SpawnDefaultWeapon();
 
-	virtual void SpecialAttack();
-
 	virtual bool CanAttack();
 
 	virtual void PlayHitReactMontage(FName SectionName);

@@ -462,18 +462,9 @@ void AGrey::AddGold(ATreasure* Gold)
 
 void AGrey::SpawnDefaultWeapon()
 {
-	UWorld* World = GetWorld();
-	if (World && DefaultWeaponClass)
-	{
-		CharacterState = ECharacterState::ECS_EquippedWeapon;
-		
-		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+	Super::SpawnDefaultWeapon();
 
-		DefaultWeapon->Equip(GetMesh(), this, this);
-
-		EquippedWeapon = DefaultWeapon;
-		
-	}
+	CharacterState = ECharacterState::ECS_EquippedWeapon;
 }
 
 void AGrey::RegenStamina(float DeltaTime)
@@ -617,8 +608,7 @@ void AGrey::LookAtCombatEnemy(float DeltaTime)
 {
 	if (IsEnemyAlive() && ActionState == EActionState::EAS_Engaged)
 	{
-		FRotator InterpYaw = FMath::RInterpTo(GetActorRotation(), GetLookAtEnemyYaw(), DeltaTime, InterpSpeed);
-		SetActorRotation(InterpYaw);
+		SetActorRotation(GetLookAtEnemyYaw());
 	}
 }
 

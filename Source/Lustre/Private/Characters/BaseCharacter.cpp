@@ -38,32 +38,6 @@ void ABaseCharacter::SetWeaponCollisionEnable(ECollisionEnabled::Type CollisionE
 	}
 }
 
-void ABaseCharacter::SpecialRangeAttack()
-{
-
-	FHitResult BoxHit;
-
-
-	const FVector Start = GetActorLocation();
-	const FVector End = GetActorLocation() + (GetActorForwardVector() * 500);
-	TArray<AActor*> ActorsToIgnore;
-
-
-	UKismetSystemLibrary::SphereTraceSingle(this, Start, End, 500.f, ETraceTypeQuery::TraceTypeQuery1
-		, false, ActorsToIgnore, EDrawDebugTrace::None, BoxHit, true);
-	
-	if (BoxHit.GetActor())
-	{
-
-		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), 100.f, GetInstigator()->GetController(), this, UDamageType::StaticClass());
-		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
-		if (HitInterface)
-		{
-			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint);
-		}
-	}
-}
-
 void ABaseCharacter::PlayHitReactMontage(FName SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -174,7 +148,16 @@ int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArr
 
 void ABaseCharacter::SpawnDefaultWeapon()
 {
+	UWorld* World = GetWorld();
+	if (World && DefaultWeaponClass)
+	{
+		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
 
+		DefaultWeapon->Equip(GetMesh(), this, this);
+
+		EquippedWeapon = DefaultWeapon;
+
+	}
 }
 
 int32 ABaseCharacter::PlayAttackMontage()

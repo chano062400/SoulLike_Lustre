@@ -398,15 +398,7 @@ AActor* AEnemy::ChoosePatrolTarget()
 
 void AEnemy::SpawnDefaultWeapon()
 {
-	UWorld* World = GetWorld();
-	if (World && DefaultWeaponClass)
-	{
-		AWeapon* DefaulfWeapon = World->SpawnActor<AWeapon>(DefaultWeaponClass);
-
-		DefaulfWeapon->Equip(GetMesh(), this, this);
-
-		EquippedWeapon = DefaulfWeapon;
-	}
+	Super::SpawnDefaultWeapon();
 }
 
 void AEnemy::PawnSeen(APawn* SeenPawn)

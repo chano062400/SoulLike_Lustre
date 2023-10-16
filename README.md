@@ -207,8 +207,7 @@ void AGrey::Dodge()
 
 }
 ```
-
-![dsadsadas.PNG](https://prod-files-secure.s3.us-west-2.amazonaws.com/cf62dc29-98cc-418e-a96e-d98714ef0602/bced0453-c5cb-47ca-89d5-88c72b5a026c/dsadsadas.png)
+![dsadsadas](https://github.com/chano062400/SoulLike_Lustre/assets/144113194/21dab1da-b7fd-41b2-8731-30503e6b16f8)
 
 # Enemy 
 
@@ -368,4 +367,5 @@ CreateFields - FieldSystem을 이용해 GeometryCollection Actor에 충돌을 �
 
 (블루프린트로 구현)
 
-![scsac.PNG](https://prod-files-secure.s3.us-west-2.amazonaws.com/cf62dc29-98cc-418e-a96e-d98714ef0602/83aaafc6-6e5a-4d99-9512-c26e32bda1a1/scsac.png)
+![scsac](https://github.com/chano062400/SoulLike_Lustre/assets/144113194/33bc0142-e3f8-4da4-8832-d5e5d9f8d5aa)
+

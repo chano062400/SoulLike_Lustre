@@ -41,6 +41,8 @@ protected:
 	
 	virtual void SpawnDefaultWeapon();
 
+	virtual void SpecialAttack();
+
 	virtual bool CanAttack();
 
 	virtual void PlayHitReactMontage(FName SectionName);
@@ -59,9 +61,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponCollisionEnable(ECollisionEnabled::Type CollisionEnabled);
-
-	UFUNCTION(BlueprintCallable)
-	void SpecialRangeAttack();
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetTranslationWarpTarget();

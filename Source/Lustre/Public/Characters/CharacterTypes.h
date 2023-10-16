@@ -12,8 +12,6 @@ enum class EActionState : uint8
 {
 	EAS_Unoccupied UMETA(DisplayName = "Unoccupied"),
 	EAS_Engaged UMETA(DisplayName = "Engaged"),
-	EAS_Rolling UMETA(DisplayName = "Rolling"),
-	EAS_Blocking UMETA(DisplayName = "Blocking"),
 	EAS_Dead UMETA(DisplayName = "Dead"),
 	EAS_MAX UMETA(DisplayName = "Default MAX")
 };
@@ -48,4 +46,13 @@ enum class EGuardState : uint8
 	EGS_Parryable UMETA(DisplayName = "Parrable"),
 
 	EGS_MAX UMETA(DisplayName = "Default MAX")
+};
+
+UENUM(BlueprintType)
+enum class ERollState : uint8
+{
+	ERS_NoRolling UMETA(DisplayName = "No Rolling"),
+	ERS_Rolling UMETA(DisplayName = "Rolling"),
+
+	ERS_MAX UMETA(DisplayName = "Default MAX")
 };

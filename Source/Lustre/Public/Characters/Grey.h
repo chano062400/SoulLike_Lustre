@@ -134,6 +134,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	EActionState ActionState = EActionState::EAS_Unoccupied;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	ERollState RollState = ERollState::ERS_NoRolling;
+
 	/* Combat */
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
@@ -166,7 +169,6 @@ protected:
 
 	void RegenStamina(float DeltaTime);
 
-	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDodgeMontage();
 
 	bool HasEnoughStamina();
@@ -180,6 +182,8 @@ protected:
 	void LookAtCombatEnemy(float DeltaTime);
 
 	void SetHUDHealth();
+
+	void CheckRollDirection();
 
 	bool IsPlayingCombatSound = false;
 
@@ -196,6 +200,12 @@ protected:
 	bool IsRunning = false;
 
 	bool IsJumping = false;
+
+	UPROPERTY(VisibleAnywhere)
+	float CharacterDirection;
+
+	UPROPERTY(VisibleAnywhere)
+	FName RollName;
 
 	UPROPERTY(EditAnywhere)
 	float InterpSpeed = 60.f;

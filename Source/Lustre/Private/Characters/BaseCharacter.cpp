@@ -148,7 +148,7 @@ int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArr
 
 void ABaseCharacter::SpawnDefaultWeapon()
 {
-	UWorld* World = GetWorld();
+		UWorld* World = GetWorld();
 	if (World && DefaultWeaponClass)
 	{
 		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
@@ -156,8 +156,9 @@ void ABaseCharacter::SpawnDefaultWeapon()
 		DefaultWeapon->Equip(GetMesh(), this, this);
 
 		EquippedWeapon = DefaultWeapon;
-
+		
 	}
+
 }
 
 int32 ABaseCharacter::PlayAttackMontage()

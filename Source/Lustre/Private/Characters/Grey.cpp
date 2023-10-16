@@ -28,6 +28,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Enemy/Enemy.h"
 #include "Components/AudioComponent.h"
+#include "KismetAnimationLibrary.h"
 
 // Sets default values
 AGrey::AGrey()
@@ -177,7 +178,7 @@ void AGrey::Jump(const FInputActionValue& Value)
 {
 	if (ActionState == EActionState::EAS_Dead) return;
 	
-	if (GetController() && !IsAttacking && !IsJumping && ActionState != EActionState::EAS_Rolling)
+	if (GetController() && !IsAttacking && !IsJumping && RollState == ERollState::ERS_NoRolling)
 	{
 		Super::Jump();
 		IsJumping = true;
@@ -189,8 +190,7 @@ void AGrey::Attack()
 	bool bCanAttack = EquippedWeapon &&
 		!IsAttacking && 
 		CharacterState != ECharacterState::ECS_Unequipped &&
-		ActionState < EActionState::EAS_Rolling &&
-		ActionState != EActionState::EAS_Dead && 
+		ActionState < EActionState::EAS_Dead &&
 		GuardState == EGuardState::EGS_NoGuard;
 	
 	if (bCanAttack)
@@ -259,7 +259,7 @@ void AGrey::GuardReleased()
 
 void AGrey::TakePotion()
 {
-	bool bCanTakePotion = ActionState < EActionState::EAS_Rolling &&
+	bool bCanTakePotion = ActionState < EActionState::EAS_Dead && 
 		CharacterMovement &&
 		!IsAttacking && 
 		!IsTakingPotion && 
@@ -476,23 +476,24 @@ void AGrey::RegenStamina(float DeltaTime)
 	}
 }
 
+void AGrey::PlayDodgeMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DodgeMontage) 
+	{
+		FName SectionName = RollName;
+
+		AnimInstance->Montage_Play(DodgeMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, DodgeMontage);
+	}
+}
+
 void AGrey::Dodge()
 {
 	if (ActionState == EActionState::EAS_Dead || !HasEnoughStamina()) return;
 	
-	if (CharacterState != ECharacterState::ECS_Unequipped && ActionState != EActionState::EAS_Rolling)
+	if (CharacterState != ECharacterState::ECS_Unequipped && RollState == ERollState::ERS_NoRolling)
 	{
-		bUseControllerRotationYaw = false;
-
-		UWorld* World = GetWorld();
-		FVector LastVector = this->GetLastMovementInputVector();
-		FRotator RollDestination = UKismetMathLibrary::MakeRotFromX(LastVector);
-		if (RollDestination != FRotator(0.f, 0.f, 0.f) && World)
-		{
-			FRotator NewRotation = UKismetMathLibrary::RInterpTo_Constant(GetActorRotation(), RollDestination, World->DeltaTimeSeconds, 720.f);
-			this->SetActorRotation(NewRotation);
-		}
-
 		PlayDodgeMontage();
 
 		if (LustreWidget)
@@ -528,9 +529,6 @@ void AGrey::SetActionState()
 			CombatSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), CombatSound, GetActorLocation(), GetActorRotation());
 			IsPlayingCombatSound = true;
 		}
-		break;
-	case EActionState::EAS_Rolling:
-		bUseControllerRotationYaw = false;
 		break;
 	}
 }
@@ -587,7 +585,9 @@ void AGrey::CanSpecialAttack()
 void AGrey::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
+	CheckRollDirection();
+
 	SetActionState();
 
 	RegenStamina(DeltaTime);
@@ -597,6 +597,7 @@ void AGrey::Tick(float DeltaTime)
 
 	// 전투중에는 적의 머리를 바라보도록 함.
 	LookAtCombatEnemy(DeltaTime);
+	
 }
 
 bool AGrey::IsEnemyAlive()
@@ -658,6 +659,20 @@ void AGrey::SetHUDHealth()
 	{
 		LustreWidget->SetHealthBarPercent(Attributes->GetHealthPercent());
 	}
+}
+
+void AGrey::CheckRollDirection()
+{
+	CharacterDirection = UKismetAnimationLibrary::CalculateDirection(GetVelocity(), GetActorRotation());
+
+	if (CharacterDirection >= -45.f && CharacterDirection < 45.f)
+		RollName = FName("Forward");
+	else if (CharacterDirection >= -135.f && CharacterDirection < -45.f)
+		RollName = FName("Left");
+	else if (CharacterDirection >= 45.f && CharacterDirection < 135.f)
+		RollName = FName("Right");
+	else
+		RollName = FName("Back");
 }
 
 float AGrey::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

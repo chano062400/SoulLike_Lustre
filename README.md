@@ -174,40 +174,38 @@ void AGrey::CheckEngagedTime(float DeltaTime)
 }
 ```
 
-Dodge - 구르기 기능을 실행하는 함수 
-
-블루프린트와 C++로 구현.
+전투시 구르기는 Direction에 따라 다른 애니메이션을 실행.
+CheckRollDirection -  Direction을 구하여 SectionName을 설정하는 함수.
 
 ```cpp
-void AGrey::Dodge()
+void AGrey::PlayDodgeMontage()
 {
-	if (ActionState == EActionState::EAS_Dead || !HasEnoughStamina()) return;
-	
-	if (CharacterState != ECharacterState::ECS_Unequipped && ActionState != EActionState::EAS_Rolling)
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DodgeMontage) 
 	{
-		bUseControllerRotationYaw = false;
+		FName SectionName = RollName;
 
-		UWorld* World = GetWorld();
-		FVector LastVector = this->GetLastMovementInputVector();
-		FRotator RollDestination = UKismetMathLibrary::MakeRotFromX(LastVector);
-		if (RollDestination != FRotator(0.f, 0.f, 0.f) && World)
-		{
-			FRotator NewRotation = UKismetMathLibrary::RInterpTo_Constant(GetActorRotation(), RollDestination, World->DeltaTimeSeconds, 720.f);
-			this->SetActorRotation(NewRotation);
-		}
-
-		PlayDodgeMontage();
-
-		if (LustreWidget)
-		{
-			Attributes->UseStamina(Attributes->GetDodgeCost());
-			LustreWidget->SetStaminaBarPercent(Attributes->GetStaminaPercent());
-		}
+		AnimInstance->Montage_Play(DodgeMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, DodgeMontage);
 	}
-
 }
 ```
-![dsadsadas](https://github.com/chano062400/SoulLike_Lustre/assets/144113194/21dab1da-b7fd-41b2-8731-30503e6b16f8)
+
+```cpp
+void AGrey::CheckRollDirection()
+{
+	CharacterDirection = UKismetAnimationLibrary::CalculateDirection(GetVelocity(), GetActorRotation());
+
+	if (CharacterDirection >= -45.f && CharacterDirection < 45.f)
+		RollName = FName("Forward");
+	else if (CharacterDirection >= -135.f && CharacterDirection < -45.f)
+		RollName = FName("Left");
+	else if (CharacterDirection >= 45.f && CharacterDirection < 135.f)
+		RollName = FName("Right");
+	else
+		RollName = FName("Back");
+}
+```
 
 # Enemy 
 

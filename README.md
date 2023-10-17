@@ -9,7 +9,9 @@
 
 ●담당부분 : Level 제작 외 모든 부분 담당 
 
-●영상 : https://www.youtube.com/watch?v=Be1NwqZVF2U
+# 포트폴리오 영상
+[![Video Label](http://img.youtube.com/vi/Be1NwqZVF2U/0.jpg)](https://youtu.be/Be1NwqZVF2U)
+
 # BaseCharacter
 
 ● 피격, 공격, Damage처리 등 Enemy와 Player에게 필요한 기능들을 담당.

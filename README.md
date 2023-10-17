@@ -221,7 +221,7 @@ void AGrey::CheckRollDirection()
 }
 ```
 
-포션을 마실때 방패대신 물약이 보이게 하였으며, 마시는 도중에는 움직이지 못함.
+포션을 마실때 방패대신 포션이 보이게 하였으며, 마시는 도중에는 움직이지 못함.
 
 ```cpp
 void AGrey::PlayTakePotionMontage()

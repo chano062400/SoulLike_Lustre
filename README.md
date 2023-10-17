@@ -13,11 +13,13 @@
 https://www.youtube.com/watch?v=Be1NwqZVF2U
 [![Video Label](http://img.youtube.com/vi/Be1NwqZVF2U/0.jpg)](https://youtu.be/Be1NwqZVF2U)
 
+핵심코드
+
 # BaseCharacter
 
 ● 피격, 공격, Damage처리 등 Enemy와 Player에게 필요한 기능들을 담당.
 
-핵심 코드
+
 
 GetHit_Implementation (Interface 함수) - 피격시 실행하는 함수.
 

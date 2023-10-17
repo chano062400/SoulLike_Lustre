@@ -179,7 +179,7 @@ void AGrey::CheckEngagedTime(float DeltaTime)
 		
 		if (!IsEnemyAlive()) ActionState = EActionState::EAS_Unoccupied;
 
-		if (Attributes && !Attributes->IsAlive())
+		if (Attributes && !Attributes->IsAlive()) // Die()가 실행돼도 ActionState가 넘어가지 않아서 여기서 처리.
 		{
 			ActionState = EActionState::EAS_Dead;
 			CombatEnemy = nullptr;
@@ -260,7 +260,7 @@ void AGrey::FinishTakePotion()
 {
 	if (Attributes && CharacterMovement)
 	{
-		CharacterMovement->SetMovementMode(EMovementMode::MOVE_Walking);
+		CharacterMovement->SetMovementMode(EMovementMode::MOVE_Walking); // Montage가 끝나야 움직일 수 있음.
 		
 		Attributes->Heal(HealAmount);
 		
@@ -290,7 +290,7 @@ void AGrey::Die()
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->bOrientRotationToMovement = false; // 죽고나서 캐릭터가 움직이지 않도록.
 	
 	SetWeaponCollisionEnable(ECollisionEnabled::NoCollision);
 

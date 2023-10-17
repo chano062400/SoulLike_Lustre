@@ -221,6 +221,126 @@ void AGrey::CheckRollDirection()
 }
 ```
 
+PlayTakePotionMontage - TakePotionMontage를 실행하는 함수. 
+
+```cpp
+void AGrey::PlayTakePotionMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		EquippedWeapon->ItemMeshShield->SetVisibility(false);
+		
+		Potion->SetVisibility(true);
+		
+		AnimInstance->Montage_Play(TakePotionMontage);
+	}
+
+	FOnMontageEnded MontageEnd;
+	MontageEnd.BindWeakLambda(this, [this](UAnimMontage* Animmontage, bool bInterrupted)
+		{
+			if (bInterrupted && CharacterMovement) // TakePotionMontage 실행중 피격시
+			{
+				ActionState = EActionState::EAS_Engaged;
+				CharacterMovement->SetMovementMode(EMovementMode::MOVE_Walking);
+				EquippedWeapon->ItemMeshShield->SetVisibility(true);
+				IsTakingPotion = false;
+			}
+			else // 방해받지 않고 Montage가 끝났을 시
+			{
+				FinishTakePotion();
+			}
+		});
+	AnimInstance->Montage_SetEndDelegate(MontageEnd, TakePotionMontage);
+}
+```
+
+```cpp
+void AGrey::FinishTakePotion()
+{
+	if (Attributes && CharacterMovement)
+	{
+		CharacterMovement->SetMovementMode(EMovementMode::MOVE_Walking);
+		
+		Attributes->Heal(HealAmount);
+		
+		SetHUDHealth();
+		
+		EquippedWeapon->ItemMeshShield->SetVisibility(true);
+		
+		Potion->SetVisibility(false);
+		
+		IsTakingPotion = false;
+	}
+}
+```
+
+Die - Hp가 0이 되어 State가 Dead가 되었을때 실행하는 함수.
+
+```cpp
+void AGrey::Die()
+{
+	ActionState = EActionState::EAS_Dead;
+	
+	Tags.Add(FName("Dead"));
+	
+	CanMove = false;
+
+	if (CombatEnemy) CombatEnemy = nullptr;
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	
+	SetWeaponCollisionEnable(ECollisionEnabled::NoCollision);
+
+	if (IsPlayingCombatSound) CombatSoundComponent->Stop();
+
+	UAnimInstance* Instance = GetMesh()->GetAnimInstance();
+	if (Instance && DeathMontage)
+	{
+		Instance->Montage_Play(DeathMontage);
+	}
+	
+	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		TObjectPtr<ALustreHUD> LustreHUD = Cast<ALustreHUD>(PlayerController->GetHUD());
+		if (LustreHUD)
+		{
+			LustreHUD->PlayDeathUI();
+		}
+	}
+	
+}
+```
+
+SetActionState - Tick함수에 두어 frame마다 ActionState를 체크하고 State에 맞는 기능을 실행하는 함수.
+
+```cpp
+void AGrey::SetActionState()
+{
+	switch (ActionState)
+	{
+	case EActionState::EAS_Unoccupied:
+		bUseControllerRotationYaw = false;
+		if (IsPlayingCombatSound)
+		{
+			CombatSoundComponent->FadeOut(2.f, 0.f);
+			IsPlayingCombatSound = false;
+		}
+		break;
+	case EActionState::EAS_Engaged:
+		bUseControllerRotationYaw = true;
+		if (!IsPlayingCombatSound)
+		{
+			CombatSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), CombatSound, GetActorLocation(), GetActorRotation());
+			IsPlayingCombatSound = true;
+		}
+		break;
+	}
+}
+```
 # Enemy 
 
 ● Patrol, Chase, Attack, Engaged 등 State에 따른 함수 처리
@@ -253,7 +373,7 @@ void AEnemy::CheckCombatTarget()
 }
 ```
 
-Die - State가 Dead가 되었을때 실행하는 함수.
+Die - Hp가 0이 되어 State가 Dead가 되었을때 실행하는 함수.
 
 ```cpp
 void AEnemy::Die()

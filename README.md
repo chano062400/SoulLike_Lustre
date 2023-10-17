@@ -274,6 +274,19 @@ void AEnemy::Die()
 }
 ```
 
+PlayRandomMontageSection - Random한 AttackMontage Section을 가져오는 함수.
+
+```cpp
+int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
+{
+	if (SectionNames.Num() <= 0) return -1 ;
+	const int32 MaxSectionIndex = SectionNames.Num() - 1;
+	const int32 Selection = FMath::RandRange(0, MaxSectionIndex);
+	PlayMontageSection(Montage, SectionNames[Selection]);
+	return Selection;
+}
+```
+
 # Weapon
 
 ● Enemy와 Character가 장착하는 무기의 기본 클래스.

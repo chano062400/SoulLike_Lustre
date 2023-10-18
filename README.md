@@ -17,9 +17,7 @@ https://www.youtube.com/watch?v=Be1NwqZVF2U
 
 # BaseCharacter
 
-● 피격, 공격, Damage처리 등 Enemy와 Player에게 필요한 기능들을 담당.
-
-
+● Enemy와 Grey의 부모 클래스로 피격, 공격, Damage처리 등 공통적으로 필요한 기능들을 담당.
 
 GetHit_Implementation (Interface 함수) - 피격시 실행하는 함수.
 

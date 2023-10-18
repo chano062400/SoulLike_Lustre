@@ -371,6 +371,68 @@ void AEnemy::CheckCombatTarget()
 }
 ```
 
+ChoosePatrolTarget - Random한 PatrolTarget을 반환하는 함수.
+
+```cpp
+AActor* AEnemy::ChoosePatrolTarget()
+{
+	TArray<AActor*> ValidTargets;
+	for (AActor* Target : PatrolTargets)
+	{
+		if (Target != PatrolTarget)
+		{
+			ValidTargets.AddUnique(Target);
+		}
+	}
+
+	const int32 NumPatrolTargets = ValidTargets.Num();
+	if (NumPatrolTargets > 0)
+	{
+		const int32 TargetSelection = FMath::RandRange(0, NumPatrolTargets - 1);
+		return ValidTargets[TargetSelection];
+	}
+	
+	return nullptr;
+}
+```
+
+PawnSeen - PawnSensing을 통해 Pawn이 감지되었을 때, 감지한 Pawn이 Character면 Chase함.
+
+```cpp
+void AEnemy::PawnSeen(APawn* SeenPawn)
+{
+	const bool bShouldChaseTarget =
+		EnemyState != EEnemyState::EES_Dead &&
+		EnemyState != EEnemyState::EES_Chasing &&
+		EnemyState < EEnemyState::EES_Attacking&&
+		SeenPawn->ActorHasTag(FName("Grey"));
+	
+	if (bShouldChaseTarget)
+	{
+		CombatTarget = SeenPawn;
+		ClearPatrolTimer();
+		ChaseTarget();
+	}
+}
+```
+
+MoveToTarget - 지정한 Target을 향해 움직이도록 하는 함수. ChaseTarget(), StartPatrolling()에 모두 쓰임.
+
+```cpp
+void AEnemy::MoveToTarget(AActor* Target)
+{
+	if (EnemyController == nullptr || Target == nullptr) return;
+	
+	FAIMoveRequest MoveRequest;
+	
+	MoveRequest.SetGoalActor(Target);
+	
+	MoveRequest.SetAcceptanceRadius(150.f);
+	
+	EnemyController->MoveTo(MoveRequest);
+}
+```
+
 Die - Hp가 0이 되어 State가 Dead가 되었을때 실행하는 함수.
 
 ```cpp

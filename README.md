@@ -43,12 +43,12 @@ void ABaseCharacter::DirectionalHitReact(const FVector& ImpactPoint)
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z); 
 	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal(); // 맞은 위치의 벡터를 정규화한다.
 
-	const double CosTheta = FVector::DotProduct(Forward, ToHit); // 벡터의 외적을 이용해 Cos Theta를 구한다.
+	const double CosTheta = FVector::DotProduct(Forward, ToHit); // 벡터의 내적을 이용해 Cos Theta를 구한다.
 	double Theta = FMath::Acos(CosTheta); // 역코사인을 이용해 Theta를 구한다.
 
 	Theta = FMath::RadiansToDegrees(Theta); // Theta를 라디안에서 각도로 변환시킨다.
 
-	const FVector CrossProduct = FVector::CrossProduct(Forward, ToHit); // 벡터의 내적을 이용해 벡터의 법선벡터가 위인지 아래인지 구한다. 
+	const FVector CrossProduct = FVector::CrossProduct(Forward, ToHit); // 벡터의 외적을 이용해 벡터의 법선벡터가 위인지 아래인지 구한다. 
 	if (CrossProduct.Z < 0) // 법선벡터가 아래라면 
 	{
 		Theta *= -1.f; // Theta는 음수가 된다.

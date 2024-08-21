@@ -9,6 +9,8 @@
 
 ●담당부분 : Level 제작 외 모든 부분 담당 
 
+●노션 링크 - https://wary-birth-aca.notion.site/Lustre-ce378515915a44cf8bd5bea44a6a1c03?pvs=4
+
 # 포트폴리오 영상
 https://www.youtube.com/watch?v=Be1NwqZVF2U
 [![Video Label](http://img.youtube.com/vi/Be1NwqZVF2U/0.jpg)](https://youtu.be/Be1NwqZVF2U)
